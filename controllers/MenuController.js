@@ -23,6 +23,17 @@ export const addMenu = async (req, res) => {
   }
 };
 
+export const getMenus = async (req, res) => {
+  try {
+    const menus = await MenuSchema.find();
+
+    res.json({ success: true, data: menus });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
 export const getAllMenu = async (req, res) => {
   try {
     const menus = await MenuSchema.find();

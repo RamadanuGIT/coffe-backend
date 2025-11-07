@@ -7,6 +7,7 @@ import userRouter from "./routes/UserRoute.js";
 import menuRouter from "./routes/MenuRoute.js";
 import cartRouter from "./routes/CartRoute.js";
 import publicMenus from "./routes/PublicMenu.js";
+import orderRouter from "./routes/OrderRoute.js";
 import { config } from "dotenv";
 import dotenv from "dotenv";
 
@@ -20,10 +21,11 @@ db.once("open", () => console.log("database running!!!"));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(userRouter);
-app.use(menuRouter);
-app.use(cartRouter);
-app.use(publicMenus);
+app.use("/api/users", userRouter);
+app.use("/api/menus", menuRouter);
+app.use("/api/cart", cartRouter);
+app.use("/api/public", publicMenus);
+app.use("/api", orderRouter);
 
 app.listen(process.env.PORT, () =>
   console.log("Server running in port: ", process.env.PORT)

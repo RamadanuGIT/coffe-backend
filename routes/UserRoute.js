@@ -15,6 +15,6 @@ router.post("/login", loginUser);
 // get router
 router.get("/profil", authenticateToken, profileUser);
 
-router.put("/profile", authenticateToken, updateUserProfile);
+router.put("/profil", authenticateToken, updateUserProfile);
 
 export default router;

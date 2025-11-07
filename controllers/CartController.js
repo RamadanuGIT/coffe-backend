@@ -55,7 +55,8 @@ export const addToCart = async (req, res) => {
 
 // PUT /cart
 export const updateCartItem = async (req, res) => {
-  const { productId, quantity, variant } = req.body;
+  const { quantity, variant } = req.body;
+  const productId = req.params.productId;
 
   try {
     const cart = await Cart.findOne({ userId: req.user.id });
@@ -66,8 +67,10 @@ export const updateCartItem = async (req, res) => {
 
     const item = cart.items.find(
       (item) =>
-        item.productId.toString() === productId && item.variant === variant
+        item.productId.toString() === productId &&
+        (!variant || item.variant === variant)
     );
+
     if (item) {
       item.quantity = quantity;
       await cart.save();
@@ -78,6 +81,7 @@ export const updateCartItem = async (req, res) => {
         .json({ success: false, error: "Item tidak ditemukan di cart" });
     }
   } catch (err) {
+    console.error("Update cart error:", err);
     res.status(500).json({ success: false, error: "Server error" });
   }
 };
@@ -93,9 +97,14 @@ export const removeCartItem = async (req, res) => {
         .status(404)
         .json({ success: false, error: "Cart tidak ditemukan" });
 
-    cart.items = cart.items.filter(
-      (item) => !item.productId.equals(productId) && item.variant === variant
-    );
+    cart.items = cart.items.filter((item) => {
+      // hapus item jika productId sama dan variant sama (jika variant dikirim)
+      if (variant) {
+        return !(item.productId.equals(productId) && item.variant === variant);
+      } else {
+        return !item.productId.equals(productId);
+      }
+    });
 
     await cart.save();
     res.json({ success: true, cart });
